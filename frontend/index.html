@@ -531,10 +531,10 @@
                             <div class="col-md-4 mb-3">
                                 <div class="card">
                                     <div class="card-body">
-                                        <h6>Reporte de Productos</h6>
+                                        <h6><i class="fas fa-box me-2"></i>Reporte de Productos</h6>
                                         <p class="text-muted">Listado completo de inventario</p>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-download me-1"></i> Generar PDF
+                                        <button class="btn btn-outline-primary btn-sm" onclick="generateReport('products')">
+                                            <i class="fas fa-download me-1"></i> Generar CSV
                                         </button>
                                     </div>
                                 </div>
@@ -542,10 +542,10 @@
                             <div class="col-md-4 mb-3">
                                 <div class="card">
                                     <div class="card-body">
-                                        <h6>Reporte de Ventas</h6>
+                                        <h6><i class="fas fa-shopping-cart me-2"></i>Reporte de Ventas</h6>
                                         <p class="text-muted">Ventas por período</p>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-download me-1"></i> Generar PDF
+                                        <button class="btn btn-outline-primary btn-sm" onclick="generateReport('sales')">
+                                            <i class="fas fa-download me-1"></i> Generar CSV
                                         </button>
                                     </div>
                                 </div>
@@ -553,12 +553,21 @@
                             <div class="col-md-4 mb-3">
                                 <div class="card">
                                     <div class="card-body">
-                                        <h6>Reporte de Stock</h6>
+                                        <h6><i class="fas fa-exclamation-triangle me-2"></i>Reporte de Stock</h6>
                                         <p class="text-muted">Productos con bajo stock</p>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-download me-1"></i> Generar PDF
+                                        <button class="btn btn-outline-primary btn-sm" onclick="generateReport('stock')">
+                                            <i class="fas fa-download me-1"></i> Generar CSV
                                         </button>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-12">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Nota:</strong> Los reportes se generan en formato CSV para facilitar su apertura en Excel u otros programas de hojas de cálculo.
                                 </div>
                             </div>
                         </div>
@@ -568,8 +577,35 @@
                 <!-- Compras -->
                 <div id="purchasesPage" style="display: none;">
                     <div class="dashboard-card">
-                        <h5 class="mb-3">Gestión de Compras</h5>
-                        <p>Módulo para registrar compras a proveedores</p>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Gestión de Compras</h5>
+                            <button class="btn btn-warning btn-sm" id="newPurchaseBtn">
+                                <i class="fas fa-plus me-1"></i> Nueva Compra
+                            </button>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th># Comprobante</th>
+                                        <th>Fecha</th>
+                                        <th>Proveedor</th>
+                                        <th>Total</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="purchasesTable">
+                                    <!-- Las compras se cargarán aquí -->
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">
+                                            <i class="fas fa-info-circle"></i> No hay compras registradas
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -686,171 +722,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- Conectar con nuestro JavaScript -->
-    <script src="frontend/app.js"></script>
-                let roleClass = 'badge ';
-                switch(user.role) {
-                    case 'Administrador': roleClass += 'badge bg-success'; break;
-                    case 'Gerente': roleClass += 'badge bg-info'; break;
-                    case 'Jefe de Bodega': roleClass += 'badge bg-warning'; break;
-                    case 'Vendedor': roleClass += 'badge bg-primary'; break;
-                    default: roleClass += 'badge bg-secondary';
-                    default: roleClass += 'bg-secondary';
-                }
-                
-                usersHTML += `
-                    <tr>
-                        <td>${user.username}</td>
-                        <td>${user.name}</td>
-                        <td>${user.email}</td>
-                        <td><span class="${roleClass}">${user.role}</span></td>
-                        <td><span class="badge bg-success">Activo</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary btn-action">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger btn-action">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-            
-            document.getElementById('usersTable').innerHTML = usersHTML;
-        }
-
-        // Función para cargar ventas
-        function loadSales() {
-            let salesHTML = '';
-            
-            systemData.sales.forEach(sale => {
-                salesHTML += `
-                    <tr>
-                        <td>${sale.invoice}</td>
-                        <td>${sale.date}</td>
-                        <td>${sale.client}</td>
-                        <td>$${sale.total.toFixed(2)}</td>
-                        <td>${sale.seller}</td>
-                        <td><span class="badge bg-success">${sale.status}</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary btn-action">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-            
-            document.getElementById('salesTable').innerHTML = salesHTML;
-        }
-
-        // Función para actualizar fecha actual
-        function updateCurrentDate() {
-            const now = new Date();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('currentDate').textContent = now.toLocaleDateString('es-ES', options);
-        }
-
-        // ============== EVENT LISTENERS ==============
-
-        // Navegación entre páginas
-        document.querySelectorAll('.nav-link-custom').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                if (this.id === 'logoutBtn') {
-                    logout();
-                    return;
-                }
-                
-                // Remover clase active de todos los links
-                document.querySelectorAll('.nav-link-custom').forEach(l => {
-                    l.classList.remove('active');
-                });
-                
-                // Agregar clase active al link clickeado
-                this.classList.add('active');
-                
-                // Ocultar todas las páginas
-                document.querySelectorAll('#pageContent > div').forEach(page => {
-                    page.style.display = 'none';
-                });
-                
-                // Mostrar página correspondiente
-                const pageId = this.getAttribute('data-page');
-                document.getElementById(pageId + 'Page').style.display = 'block';
-                document.getElementById('pageTitle').textContent = this.textContent.trim();
-                
-                // Cargar datos de la página
-                switch(pageId) {
-                    case 'dashboard':
-                        loadDashboard();
-                        break;
-                    case 'products':
-                        loadProducts();
-                        break;
-                    case 'sales':
-                        loadSales();
-                        break;
-                    case 'users':
-                        loadUsers();
-                        break;
-                }
-            });
-        });
-
-        // Botón para nuevo producto
-        document.getElementById('newProductBtn')?.addEventListener('click', function() {
-            const modal = new bootstrap.Modal(document.getElementById('newProductModal'));
-            modal.show();
-        });
-
-        // Botón para nuevo usuario
-        document.getElementById('newUserBtn')?.addEventListener('click', function() {
-            const modal = new bootstrap.Modal(document.getElementById('newUserModal'));
-            modal.show();
-        });
-
-        // Botón para nueva venta
-        document.getElementById('newSaleBtn')?.addEventListener('click', function() {
-            alert('Funcionalidad de nueva venta - Módulo en desarrollo');
-        });
-
-        // Función de logout
-        function logout() {
-            if (confirm('¿Estás seguro de cerrar sesión?')) {
-                document.getElementById('main-system').style.display = 'none';
-                document.getElementById('login-page').style.display = 'block';
-                systemData.currentUser = null;
-                
-                // Limpiar campos de login
-                document.getElementById('username').value = '';
-                document.getElementById('password').value = '';
-            }
-        }
-
-        // Botón de logout
-        document.getElementById('logoutBtn').addEventListener('click', logout);
-
-        // ============== INICIALIZACIÓN ==============
-
-        // Cargar datos iniciales
-        updateCurrentDate();
-
-        // Mostrar fecha y hora actual cada minuto
-        setInterval(updateCurrentDate, 60000);
-
-        // Inicializar tooltips de Bootstrap
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
-
-        console.log('Sistema de Inventario Ferretería Pro cargado correctamente');
-        console.log('Credenciales disponibles:');
-        console.log('- kenny.admin / admin123 (Administrador)');
-        console.log('- ana.vendedor / ventas123 (Vendedor)');
-        console.log('- admin / admin (Acceso rápido)');
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>

@@ -515,5 +515,134 @@ def create_customer():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/products/<int:product_id>', methods=['PUT'])
+@login_required
+def update_product(product_id):
+    try:
+        data = request.get_json()
+        
+        required_fields = ['codigo_producto', 'nombre_producto', 'precio_venta', 'id_categoria']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({'error': f'El campo {field} es requerido'}), 400
+        
+        query = """
+        UPDATE PRODUCTO 
+        SET codigo_producto = %s, nombre_producto = %s, descripcion = %s,
+            precio_compra_ref = %s, precio_venta = %s, stock_actual = %s,
+            stock_minimo = %s, unidad_medida = %s, id_categoria = %s, id_proveedor = %s
+        WHERE id_producto = %s
+        """
+        
+        params = (
+            data['codigo_producto'],
+            data['nombre_producto'],
+            data.get('descripcion', ''),
+            data.get('precio_compra_ref', 0),
+            data['precio_venta'],
+            data.get('stock_actual', 0),
+            data.get('stock_minimo', 5),
+            data.get('unidad_medida', 'UNIDAD'),
+            data['id_categoria'],
+            data.get('id_proveedor', 1),
+            product_id
+        )
+        
+        result = db.execute_query(query, params)
+        
+        if result and result['affected_rows'] > 0:
+            return jsonify({'success': True, 'message': 'Producto actualizado correctamente'})
+        else:
+            return jsonify({'error': 'Producto no encontrado o sin cambios'}), 404
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/products/<int:product_id>', methods=['DELETE'])
+@login_required
+def delete_product(product_id):
+    try:
+        # Soft delete - cambiar estado a INACTIVO
+        query = "UPDATE PRODUCTO SET estado = 'INACTIVO' WHERE id_producto = %s"
+        result = db.execute_query(query, (product_id,))
+        
+        if result and result['affected_rows'] > 0:
+            return jsonify({'success': True, 'message': 'Producto eliminado correctamente'})
+        else:
+            return jsonify({'error': 'Producto no encontrado'}), 404
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/users/<int:user_id>', methods=['PUT'])
+@login_required
+def update_user(user_id):
+    try:
+        data = request.get_json()
+        
+        required_fields = ['nombres', 'apellidos', 'usuario_login', 'id_tipo_usuario']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({'error': f'El campo {field} es requerido'}), 400
+        
+        # Construir consulta dinámicamente
+        query_parts = []
+        params = []
+        
+        query_parts.append("nombres = %s")
+        params.append(data['nombres'])
+        
+        query_parts.append("apellidos = %s")
+        params.append(data['apellidos'])
+        
+        query_parts.append("usuario_login = %s")
+        params.append(data['usuario_login'])
+        
+        if data.get('clave'):
+            query_parts.append("clave_hash = %s")
+            params.append(hash_password(data['clave']))
+        
+        query_parts.append("email = %s")
+        params.append(data.get('email', ''))
+        
+        query_parts.append("telefono = %s")
+        params.append(data.get('telefono', ''))
+        
+        query_parts.append("id_tipo_usuario = %s")
+        params.append(data['id_tipo_usuario'])
+        
+        query_parts.append("cedula = %s")
+        params.append(data.get('cedula', ''))
+        
+        params.append(user_id)
+        
+        query = f"UPDATE USUARIO SET {', '.join(query_parts)} WHERE id_usuario = %s"
+        
+        result = db.execute_query(query, params)
+        
+        if result and result['affected_rows'] > 0:
+            return jsonify({'success': True, 'message': 'Usuario actualizado correctamente'})
+        else:
+            return jsonify({'error': 'Usuario no encontrado o sin cambios'}), 404
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/users/<int:user_id>', methods=['DELETE'])
+@login_required
+def delete_user(user_id):
+    try:
+        # Soft delete - cambiar estado a INACTIVO
+        query = "UPDATE USUARIO SET estado = 'INACTIVO' WHERE id_usuario = %s"
+        result = db.execute_query(query, (user_id,))
+        
+        if result and result['affected_rows'] > 0:
+            return jsonify({'success': True, 'message': 'Usuario eliminado correctamente'})
+        else:
+            return jsonify({'error': 'Usuario no encontrado'}), 404
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
