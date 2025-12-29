@@ -66,6 +66,20 @@ cd Ferreteria_Inventario_Grupo_5-
    ```
    El servidor backend estará disponible en `http://localhost:5000`
 
+### 2.5 Usuarios de Prueba
+
+El sistema incluye varios usuarios de prueba predefinidos para facilitar las pruebas:
+
+| Usuario | Contraseña | Rol |
+|---------|------------|-----|
+| kenny.admin | admin123 | Administrador |
+| isaac.manager | gerente123 | Gerente |
+| valeria.jefe | bodega123 | Jefe de Bodega |
+| ana.vendedor | ventas123 | Vendedor |
+| luis.contador | contador123 | Contador |
+
+**Nota:** Estos usuarios se crean automáticamente al ejecutar `seed_database.py`.
+
 ### 3. Configuración del Frontend
 
 1. **Instalar dependencias**
