@@ -11,7 +11,8 @@ async function handleLogin(event) {
 
     try {
         currentUser = await login(username, password);
-        showMainSystem();
+        // Pasar el rol del usuario a showMainSystem
+        showMainSystem(currentUser.role);
         updateUserInfo(currentUser);
         navigateTo('dashboard');
         loadDashboardData();
