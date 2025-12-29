@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Inventario - Ferretería</title>
+    <!-- Bootstrap para diseño rápido -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome para íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            margin-top: 50px;
+        }
+        
+        .system-name {
+            color: #667eea;
+            font-weight: 700;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .welcome-message {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        
+        .user-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .user-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .user-role {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .btn-login {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 12px;
+            font-weight: 600;
+            width: 100%;
+        }
+        
+        /* Estilos para el sistema principal */
+        .sidebar {
+            background: #2c3e50;
+            color: white;
+            min-height: 100vh;
+            width: 250px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding-top: 20px;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+        
+        .nav-link-custom {
+            color: #ecf0f1;
+            padding: 12px 20px;
+            margin: 5px 0;
+            border-radius: 0;
+            transition: all 0.3s;
+        }
+        
+        .nav-link-custom:hover {
+            background: #34495e;
+            color: white;
+            padding-left: 25px;
+        }
+        
+        .nav-link-custom.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .dashboard-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 4px solid #667eea;
+        }
+        
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .product-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .stock-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .stock-danger {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .btn-action {
+            padding: 5px 10px;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+        
+        .table-custom th {
+            background: #667eea;
+            color: white;
+            border: none;
+        }
+        
+        .modal-header-custom {
+            background: #667eea;
+            color: white;
+        }
+        
+        .role-badge {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 10px;
+        }
+        
+        .role-admin { background: #dc3545; color: white; }
+        .role-manager { background: #28a745; color: white; }
+        .role-warehouse { background: #6f42c1; color: white; }
+        .role-purchase { background: #fd7e14; color: white; }
+        .role-seller { background: #17a2b8; color: white; }
+    </style>
+</head>
+<body>
+    <!-- PANTALLA DE LOGIN -->
+    <div id="login-page">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="login-card">
+                        <div class="text-center mb-4">
+                            <h1 class="system-name">
+                                <i class="fas fa-tools"></i> FERRETERÍA PRO
+                            </h1>
+                            <p class="welcome-message">Sistema de Gestión de Inventario - Grupo 5</p>
+                        </div>
+                        
+                        <div class="row">
+                            <!-- Formulario de Login -->
+                            <div class="col-md-6">
+                                <h4 class="mb-4">Iniciar Sesión</h4>
+                                <form id="loginForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">Usuario</label>
+                                        <input type="text" class="form-control" id="username" 
+                                            placeholder="Ej: admin" required>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Contraseña</label>
+                                        <input type="password" class="form-control" id="password" 
+                                            placeholder="Ej: admin123" required>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-login text-white">
+                                        <i class="fas fa-sign-in-alt"></i> Ingresar al Sistema
+                                    </button>
+                                    
+                                    <div class="mt-3 text-center">
+                                        <small class="text-muted">
+                                            Usa las credenciales de la derecha o prueba con:<br>
+                                            <strong>Usuario:</strong> admin <strong>Contraseña:</strong> admin
+                                        </small>
+                                    </div>
+                                </form>
+                            </div>
+                            
+                            <!-- Usuarios de Prueba -->
+                            <div class="col-md-6">
+                                <h4 class="mb-4">Usuarios para Prueba</h4>
+                                
+                                <div class="user-card" onclick="fillCredentials('kenny.admin', 'admin123')">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong><i class="fas fa-user-shield"></i> Kenny Chung</strong>
+                                            <div class="user-role">Administrador</div>
+                                        </div>
+                                        <div>
+                                            <span class="badge role-admin">Admin</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <small><strong>Usuario:</strong> kenny.admin</small><br>
+                                        <small><strong>Contraseña:</strong> admin123</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="user-card" onclick="fillCredentials('isaac.manager', 'gerente123')">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong><i class="fas fa-chart-line"></i> Isaac Kalef</strong>
+                                            <div class="user-role">Gerente</div>
+                                        </div>
+                                        <div>
+                                            <span class="badge role-manager">Gerente</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <small><strong>Usuario:</strong> isaac.manager</small><br>
+                                        <small><strong>Contraseña:</strong> gerente123</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="user-card" onclick="fillCredentials('valeria.jefe', 'bodega123')">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong><i class="fas fa-warehouse"></i> Valeria Mero</strong>
+                                            <div class="user-role">Jefe de Bodega</div>
+                                        </div>
+                                        <div>
+                                            <span class="badge role-warehouse">Jefe Bodega</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <small><strong>Usuario:</strong> valeria.jefe</small><br>
+                                        <small><strong>Contraseña:</strong> bodega123</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="user-card" onclick="fillCredentials('ana.vendedor', 'ventas123')">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong><i class="fas fa-cash-register"></i> Ana Vendedor</strong>
+                                            <div class="user-role">Vendedor</div>
+                                        </div>
+                                        <div>
+                                            <span class="badge role-seller">Vendedor</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <small><strong>Usuario:</strong> ana.vendedor</small><br>
+                                        <small><strong>Contraseña:</strong> ventas123</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="alert alert-info mt-3">
+                                    <small>
+                                        <i class="fas fa-info-circle"></i>
+                                        <strong>Para probar rápido:</strong> Haz clic en cualquier tarjeta de usuario 
+                                        para autocompletar las credenciales.
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Créditos -->
+                    <div class="text-center mt-4 text-white">
+                        <small>
+                            <strong>Integrantes del Proyecto:</strong><br>
+                            Kenny Chung Velastegui • Isaac Kalef Vera Villalba • Valeria Mero Zambrano • Samuel Domenech
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SISTEMA PRINCIPAL (oculto inicialmente) -->
+    <div id="main-system" style="display: none;">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="text-center mb-4">
+                <h4 class="mb-0"><i class="fas fa-tools"></i></h4>
+                <h5 class="mb-0 mt-1">FERRETERÍA PRO</h5>
+                <small>Sistema de Inventario</small>
+            </div>
+            
+            <div class="px-3 mb-4">
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        <div style="width: 40px; height: 40px; background: #667eea; border-radius: 50%; 
+                                   display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;"
+                             id="userAvatar">
+                            A
+                        </div>
+                    </div>
+                    <div>
+                        <div id="userName">Administrador</div>
+                        <small id="userRole" class="text-muted">Administrador</small>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="nav flex-column">
+                <a class="nav-link nav-link-custom active" href="#" data-page="dashboard">
+                    <i class="fas fa-home me-2"></i> Dashboard
+                </a>
+                <a class="nav-link nav-link-custom" href="#" data-page="products">
+                    <i class="fas fa-box me-2"></i> Productos
+                </a>
+                <a class="nav-link nav-link-custom" href="#" data-page="sales">
+                    <i class="fas fa-shopping-cart me-2"></i> Ventas
+                </a>
+                <a class="nav-link nav-link-custom" href="#" data-page="purchases">
+                    <i class="fas fa-shopping-bag me-2"></i> Compras
+                </a>
+                <a class="nav-link nav-link-custom" href="#" data-page="users">
+                    <i class="fas fa-users me-2"></i> Usuarios
+                </a>
+                <a class="nav-link nav-link-custom" href="#" data-page="reports">
+                    <i class="fas fa-chart-bar me-2"></i> Reportes
+                </a>
+                <hr class="text-white-50 my-3">
+                <a class="nav-link nav-link-custom" href="#" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
+                </a>
+            </nav>
+        </div>
+
+        <!-- Contenido Principal -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 id="pageTitle">Dashboard</h4>
+                <div class="d-flex align-items-center">
+                    <span class="me-3" id="currentDate"></span>
+                    <button class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Contenido de las páginas -->
+            <div id="pageContent">
+                <!-- Dashboard -->
+                <div id="dashboardPage">
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="dashboard-card">
+                                <div class="stat-number" id="totalProducts">24</div>
+                                <div class="stat-label">Productos Totales</div>
+                                <small class="text-muted">5 con bajo stock</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="dashboard-card">
+                                <div class="stat-number" id="totalUsers">6</div>
+                                <div class="stat-label">Usuarios Activos</div>
+                                <small class="text-muted">3 roles diferentes</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="dashboard-card">
+                                <div class="stat-number" id="todaySales">$1,245</div>
+                                <div class="stat-label">Ventas Hoy</div>
+                                <small class="text-muted">8 transacciones</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="dashboard-card">
+                                <div class="stat-number" id="inventoryValue">$15,890</div>
+                                <div class="stat-label">Valor Inventario</div>
+                                <small class="text-muted">Stock disponible</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="dashboard-card">
+                                <h5 class="mb-3">Productos con Bajo Stock</h5>
+                                <div id="lowStockProducts">
+                                    <!-- Productos se cargarán aquí -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="dashboard-card">
+                                <h5 class="mb-3">Alertas Recientes</h5>
+                                <div id="recentAlerts">
+                                    <!-- Alertas se cargarán aquí -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Productos -->
+                <div id="productsPage" style="display: none;">
+                    <div class="dashboard-card">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Gestión de Productos</h5>
+                            <button class="btn btn-primary btn-sm" id="newProductBtn">
+                                <i class="fas fa-plus me-1"></i> Nuevo Producto
+                            </button>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-hover table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Producto</th>
+                                        <th>Categoría</th>
+                                        <th>Stock</th>
+                                        <th>Precio</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="productsTable">
+                                    <!-- Productos se cargarán aquí -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ventas -->
+                <div id="salesPage" style="display: none;">
+                    <div class="dashboard-card">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Gestión de Ventas</h5>
+                            <button class="btn btn-success btn-sm" id="newSaleBtn">
+                                <i class="fas fa-plus me-1"></i> Nueva Venta
+                            </button>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th># Factura</th>
+                                        <th>Fecha</th>
+                                        <th>Cliente</th>
+                                        <th>Total</th>
+                                        <th>Vendedor</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="salesTable">
+                                    <!-- Ventas se cargarán aquí -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Usuarios -->
+                <div id="usersPage" style="display: none;">
+                    <div class="dashboard-card">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Gestión de Usuarios</h5>
+                            <button class="btn btn-primary btn-sm" id="newUserBtn">
+                                <i class="fas fa-plus me-1"></i> Nuevo Usuario
+                            </button>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Usuario</th>
+                                        <th>Nombres</th>
+                                        <th>Email</th>
+                                        <th>Rol</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTable">
+                                    <!-- Usuarios se cargarán aquí -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reportes -->
+                <div id="reportsPage" style="display: none;">
+                    <div class="dashboard-card">
+                        <h5 class="mb-3">Reportes del Sistema</h5>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6>Reporte de Productos</h6>
+                                        <p class="text-muted">Listado completo de inventario</p>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-download me-1"></i> Generar PDF
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6>Reporte de Ventas</h6>
+                                        <p class="text-muted">Ventas por período</p>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-download me-1"></i> Generar PDF
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6>Reporte de Stock</h6>
+                                        <p class="text-muted">Productos con bajo stock</p>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-download me-1"></i> Generar PDF
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Compras -->
+                <div id="purchasesPage" style="display: none;">
+                    <div class="dashboard-card">
+                        <h5 class="mb-3">Gestión de Compras</h5>
+                        <p>Módulo para registrar compras a proveedores</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALES -->
+
+    <!-- Modal Nuevo Producto -->
+    <div class="modal fade" id="newProductModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header modal-header-custom">
+                    <h5 class="modal-title text-white">Nuevo Producto</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="productForm">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre del Producto *</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Código *</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Precio de Venta *</label>
+                                <input type="number" class="form-control" step="0.01" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Stock Inicial *</label>
+                                <input type="number" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Categoría</label>
+                            <select class="form-control">
+                                <option>Herramientas</option>
+                                <option>Material Eléctrico</option>
+                                <option>Pinturas</option>
+                                <option>Fontanería</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary">Guardar Producto</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nuevo Usuario -->
+    <div class="modal fade" id="newUserModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header modal-header-custom">
+                    <h5 class="modal-title text-white">Nuevo Usuario</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="userForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Nombres *</label>
+                                <input type="text" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Apellidos *</label>
+                                <input type="text" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Usuario Login *</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña *</label>
+                            <input type="password" class="form-control" required>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Rol *</label>
+                                <select class="form-control" required>
+                                    <option value="">Seleccionar...</option>
+                                    <option>Administrador</option>
+                                    <option>Gerente</option>
+                                    <option>Jefe de Bodega</option>
+                                    <option>Vendedor</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Estado</label>
+                                <select class="form-control">
+                                    <option>Activo</option>
+                                    <option>Inactivo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary">Guardar Usuario</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS y Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // ============== DATOS DEL SISTEMA ==============
+        const systemData = {
+            currentUser: null,
+            
+            // Usuarios del sistema
+            users: [
+                {
+                    id: 1,
+                    username: "kenny.admin",
+                    password: "admin123",
+                    name: "Kenny Chung",
+                    role: "Administrador",
+                    avatar: "K",
+                    email: "kenny@ferreteria.com"
+                },
+                {
+                    id: 2,
+                    username: "isaac.manager",
+                    password: "gerente123",
+                    name: "Isaac Kalef",
+                    role: "Gerente",
+                    avatar: "I",
+                    email: "isaac@ferreteria.com"
+                },
+                {
+                    id: 3,
+                    username: "valeria.jefe",
+                    password: "bodega123",
+                    name: "Valeria Mero",
+                    role: "Jefe de Bodega",
+                    avatar: "V",
+                    email: "valeria@ferreteria.com"
+                },
+                {
+                    id: 4,
+                    username: "samuel.compras",
+                    password: "compras123",
+                    name: "Samuel Domenech",
+                    role: "Encargado Compras",
+                    avatar: "S",
+                    email: "samuel@ferreteria.com"
+                },
+                {
+                    id: 5,
+                    username: "carlos.bodega",
+                    password: "stock123",
+                    name: "Carlos Bodega",
+                    role: "Bodeguero",
+                    avatar: "C",
+                    email: "carlos@ferreteria.com"
+                },
+                {
+                    id: 6,
+                    username: "ana.vendedor",
+                    password: "ventas123",
+                    name: "Ana Vendedor",
+                    role: "Vendedor",
+                    avatar: "A",
+                    email: "ana@ferreteria.com"
+                }
+            ],
+            
+            // Productos de ejemplo
+            products: [
+                {
+                    id: 1,
+                    code: "PROD001",
+                    name: "Martillo 16oz",
+                    category: "Herramientas",
+                    stock: 25,
+                    minStock: 10,
+                    price: 15.99,
+                    status: "Activo"
+                },
+                {
+                    id: 2,
+                    code: "PROD002",
+                    name: "Tornillos 3\" (100u)",
+                    category: "Materiales",
+                    stock: 8,
+                    minStock: 20,
+                    price: 8.50,
+                    status: "Activo"
+                },
+                {
+                    id: 3,
+                    code: "PROD003",
+                    name: "Pintura Blanca 1L",
+                    category: "Pinturas",
+                    stock: 35,
+                    minStock: 15,
+                    price: 22.50,
+                    status: "Activo"
+                },
+                {
+                    id: 4,
+                    code: "PROD004",
+                    name: "Cable Eléctrico 2.5mm",
+                    category: "Eléctrico",
+                    stock: 150,
+                    minStock: 50,
+                    price: 1.20,
+                    status: "Activo"
+                },
+                {
+                    id: 5,
+                    code: "PROD005",
+                    name: "Llave Inglesa 10\"",
+                    category: "Herramientas",
+                    stock: 5,
+                    minStock: 15,
+                    price: 12.75,
+                    status: "Inactivo"
+                }
+            ],
+            
+            // Ventas de ejemplo
+            sales: [
+                {
+                    id: 1,
+                    invoice: "FAC-001",
+                    date: "2024-01-15",
+                    client: "Juan Pérez",
+                    total: 125.50,
+                    seller: "Ana Vendedor",
+                    status: "Completada"
+                },
+                {
+                    id: 2,
+                    invoice: "FAC-002",
+                    date: "2024-01-15",
+                    client: "María González",
+                    total: 89.75,
+                    seller: "Ana Vendedor",
+                    status: "Completada"
+                }
+            ]
+        };
+
+        // ============== FUNCIONES DEL SISTEMA ==============
+
+        // Función para autocompletar credenciales
+        function fillCredentials(username, password) {
+            document.getElementById('username').value = username;
+            document.getElementById('password').value = password;
+        }
+
+        // Función de login
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Verificar credenciales
+            let user = systemData.users.find(u => 
+                (u.username === username && u.password === password) ||
+                (username === 'admin' && password === 'admin') ||
+                (username === 'test' && password === 'test')
+            );
+            
+            if (user || (username && password)) {
+                // Si no encuentra usuario exacto, crea uno genérico
+                if (!user) {
+                    user = {
+                        name: username,
+                        role: "Usuario Demo",
+                        avatar: username.charAt(0).toUpperCase()
+                    };
+                }
+                
+                systemData.currentUser = user;
+                
+                // Mostrar sistema principal
+                document.getElementById('login-page').style.display = 'none';
+                document.getElementById('main-system').style.display = 'flex';
+                
+                // Actualizar información de usuario
+                document.getElementById('userName').textContent = user.name;
+                document.getElementById('userRole').textContent = user.role;
+                document.getElementById('userAvatar').textContent = user.avatar;
+                
+                // Cargar datos iniciales
+                loadDashboard();
+                updateCurrentDate();
+                
+                // Mostrar mensaje de bienvenida
+                alert(`¡Bienvenido ${user.name}!\nRol: ${user.role}\n\nSistema cargado correctamente.`);
+            } else {
+                alert('Credenciales incorrectas. Prueba con:\nUsuario: admin\nContraseña: admin');
+            }
+        });
+
+        // Función para cargar dashboard
+        function loadDashboard() {
+            // Productos con bajo stock
+            const lowStockProducts = systemData.products.filter(p => p.stock <= p.minStock);
+            let lowStockHTML = '';
+            
+            lowStockProducts.forEach(product => {
+                const stockClass = product.stock < 5 ? 'stock-danger' : 'stock-warning';
+                lowStockHTML += `
+                    <div class="product-card ${stockClass}">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="product-name">${product.name}</div>
+                                <small>Código: ${product.code} | Categoría: ${product.category}</small>
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold">Stock: ${product.stock}</div>
+                                <small>Mínimo: ${product.minStock}</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('lowStockProducts').innerHTML = lowStockHTML || 
+                '<div class="alert alert-success">¡Todo en orden! No hay productos con bajo stock.</div>';
+            
+            // Alertas recientes
+            const alertsHTML = `
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Productos con bajo stock:</strong> ${lowStockProducts.length} productos
+                </div>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Ventas hoy:</strong> $1,245 en 8 transacciones
+                </div>
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    <strong>Sistema actualizado:</strong> Última actualización: Hoy 10:30 AM
+                </div>
+            `;
+            
+            document.getElementById('recentAlerts').innerHTML = alertsHTML;
+        }
+
+        // Función para cargar productos
+        function loadProducts() {
+            let productsHTML = '';
+            
+            systemData.products.forEach(product => {
+                const statusClass = product.status === 'Activo' ? 'badge bg-success' : 'badge bg-danger';
+                const stockClass = product.stock <= product.minStock ? 
+                    (product.stock < 5 ? 'text-danger fw-bold' : 'text-warning fw-bold') : '';
+                
+                productsHTML += `
+                    <tr>
+                        <td>${product.code}</td>
+                        <td>${product.name}</td>
+                        <td>${product.category}</td>
+                        <td class="${stockClass}">${product.stock}</td>
+                        <td>$${product.price.toFixed(2)}</td>
+                        <td><span class="${statusClass}">${product.status}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary btn-action">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger btn-action">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('productsTable').innerHTML = productsHTML;
+        }
+
+        // Función para cargar usuarios
+        function loadUsers() {
+            let usersHTML = '';
+            
+            systemData.users.forEach(user => {
+                let roleClass = 'badge ';
+                switch(user.role) {
+                    case 'Administrador': roleClass += 'role-admin'; break;
+                    case 'Gerente': roleClass += 'role-manager'; break;
+                    case 'Jefe de Bodega': roleClass += 'role-warehouse'; break;
+                    case 'Vendedor': roleClass += 'role-seller'; break;
+                    default: roleClass += 'bg-secondary';
+                }
+                
+                usersHTML += `
+                    <tr>
+                        <td>${user.username}</td>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td><span class="${roleClass}">${user.role}</span></td>
+                        <td><span class="badge bg-success">Activo</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary btn-action">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger btn-action">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('usersTable').innerHTML = usersHTML;
+        }
+
+        // Función para cargar ventas
+        function loadSales() {
+            let salesHTML = '';
+            
+            systemData.sales.forEach(sale => {
+                salesHTML += `
+                    <tr>
+                        <td>${sale.invoice}</td>
+                        <td>${sale.date}</td>
+                        <td>${sale.client}</td>
+                        <td>$${sale.total.toFixed(2)}</td>
+                        <td>${sale.seller}</td>
+                        <td><span class="badge bg-success">${sale.status}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary btn-action">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('salesTable').innerHTML = salesHTML;
+        }
+
+        // Función para actualizar fecha actual
+        function updateCurrentDate() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('es-ES', options);
+        }
+
+        // ============== EVENT LISTENERS ==============
+
+        // Navegación entre páginas
+        document.querySelectorAll('.nav-link-custom').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                if (this.id === 'logoutBtn') {
+                    logout();
+                    return;
+                }
+                
+                // Remover clase active de todos los links
+                document.querySelectorAll('.nav-link-custom').forEach(l => {
+                    l.classList.remove('active');
+                });
+                
+                // Agregar clase active al link clickeado
+                this.classList.add('active');
+                
+                // Ocultar todas las páginas
+                document.querySelectorAll('#pageContent > div').forEach(page => {
+                    page.style.display = 'none';
+                });
+                
+                // Mostrar página correspondiente
+                const pageId = this.getAttribute('data-page');
+                document.getElementById(pageId + 'Page').style.display = 'block';
+                document.getElementById('pageTitle').textContent = this.textContent.trim();
+                
+                // Cargar datos de la página
+                switch(pageId) {
+                    case 'dashboard':
+                        loadDashboard();
+                        break;
+                    case 'products':
+                        loadProducts();
+                        break;
+                    case 'sales':
+                        loadSales();
+                        break;
+                    case 'users':
+                        loadUsers();
+                        break;
+                }
+            });
+        });
+
+        // Botón para nuevo producto
+        document.getElementById('newProductBtn')?.addEventListener('click', function() {
+            const modal = new bootstrap.Modal(document.getElementById('newProductModal'));
+            modal.show();
+        });
+
+        // Botón para nuevo usuario
+        document.getElementById('newUserBtn')?.addEventListener('click', function() {
+            const modal = new bootstrap.Modal(document.getElementById('newUserModal'));
+            modal.show();
+        });
+
+        // Botón para nueva venta
+        document.getElementById('newSaleBtn')?.addEventListener('click', function() {
+            alert('Funcionalidad de nueva venta - Módulo en desarrollo');
+        });
+
+        // Función de logout
+        function logout() {
+            if (confirm('¿Estás seguro de cerrar sesión?')) {
+                document.getElementById('main-system').style.display = 'none';
+                document.getElementById('login-page').style.display = 'block';
+                systemData.currentUser = null;
+                
+                // Limpiar campos de login
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+            }
+        }
+
+        // Botón de logout
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+
+        // ============== INICIALIZACIÓN ==============
+
+        // Cargar datos iniciales
+        updateCurrentDate();
+
+        // Mostrar fecha y hora actual cada minuto
+        setInterval(updateCurrentDate, 60000);
+
+        // Inicializar tooltips de Bootstrap
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        console.log('Sistema de Inventario Ferretería Pro cargado correctamente');
+        console.log('Credenciales disponibles:');
+        console.log('- kenny.admin / admin123 (Administrador)');
+        console.log('- ana.vendedor / ventas123 (Vendedor)');
+        console.log('- admin / admin (Acceso rápido)');
+    </script>
+</body>
+</html>
