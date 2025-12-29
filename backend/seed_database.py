@@ -57,11 +57,11 @@ def insert_tipos_usuario():
 def insert_usuarios():
     """Inserta usuarios de ejemplo con contraseñas hasheadas"""
     usuarios = [
-        ('kenny.admin', 'Kenny', 'Admin', 'admin@ferreteria.com', '0999999999', 'admin123', 1),
-        ('isaac.manager', 'Isaac', 'Manager', 'gerente@ferreteria.com', '0987654321', 'gerente123', 2),
-        ('bodega1', 'Carlos', 'Mendoza', 'bodega@ferreteria.com', '0976543210', 'bodega123', 3),
-        ('vendedor1', 'Ana', 'Pérez', 'vendedor@ferreteria.com', '0965432109', 'vendedor123', 4),
-        ('contador1', 'Luis', 'Martínez', 'contador@ferreteria.com', '0954321098', 'contador123', 5)
+        ('kenny.admin', 'Kenny', 'Chung', 'kenny@ferreteria.com', '0999999999', 'admin123', 1),  # Admin
+        ('isaac.manager', 'Isaac', 'Kalef', 'isaac@ferreteria.com', '0987654321', 'gerente123', 2),  # Gerente
+        ('valeria.jefe', 'Valeria', 'Mero', 'valeria@ferreteria.com', '0976543210', 'bodega123', 3),  # Jefe de Bodega
+        ('ana.vendedor', 'Ana', 'Pérez', 'ana@ferreteria.com', '0965432109', 'ventas123', 4),  # Vendedor
+        ('luis.contador', 'Luis', 'Martínez', 'luis@ferreteria.com', '0954321098', 'contador123', 5)  # Contador
     ]
     
     for user in usuarios:

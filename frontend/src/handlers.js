@@ -4,20 +4,40 @@ import apiRequest from './api.js';
 
 let currentUser = null;
 
-async function handleLogin(event) {
+export async function handleLogin(event) {
     event.preventDefault();
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    
+    if (!usernameInput || !passwordInput) {
+        console.error('No se encontraron los campos de usuario o contraseña');
+        return;
+    }
+
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value;
+
+    if (!username || !password) {
+        alert('Por favor ingrese usuario y contraseña');
+        return;
+    }
 
     try {
+        console.log('Iniciando sesión con:', username);
         currentUser = await login(username, password);
-        // Pasar el rol del usuario a showMainSystem
-        showMainSystem(currentUser.role);
-        updateUserInfo(currentUser);
-        navigateTo('dashboard');
-        loadDashboardData();
+        console.log('Usuario autenticado:', currentUser);
+        
+        if (currentUser && currentUser.role) {
+            showMainSystem(currentUser.role);
+            updateUserInfo(currentUser);
+            navigateTo('dashboard');
+            loadDashboardData();
+        } else {
+            throw new Error('Datos de usuario incompletos');
+        }
     } catch (error) {
-        alert('Error de login: ' + error.message);
+        console.error('Error en handleLogin:', error);
+        alert('Error de inicio de sesión: ' + (error.message || 'Credenciales incorrectas'));
     }
 }
 
@@ -67,8 +87,30 @@ async function loadPageData(page) {
     }
 }
 
+function handleTestUserClick(event) {
+    const userCard = event.target.closest('.user-card');
+    if (!userCard) return;
+
+    const username = userCard.dataset.username;
+    const password = userCard.dataset.password;
+    
+    if (username && password) {
+        document.getElementById('username').value = username;
+        document.getElementById('password').value = password;
+        
+        // Optional: Auto-submit the form
+        // document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+    }
+}
+
 export function setupEventHandlers() {
+    // Login form handlers
     document.getElementById('loginForm')?.addEventListener('submit', handleLogin);
     document.getElementById('logoutBtn')?.addEventListener('click', handleLogout);
+    
+    // Navigation handler
     document.querySelector('.sidebar .nav')?.addEventListener('click', handleNavigation);
+    
+    // Test user click handler
+    document.getElementById('test-users-container')?.addEventListener('click', handleTestUserClick);
 }
