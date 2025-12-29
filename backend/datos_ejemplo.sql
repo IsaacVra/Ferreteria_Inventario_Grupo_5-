@@ -19,10 +19,10 @@ INSERT INTO TIPO_USUARIO (nombre_tipo, descripcion) VALUES
 -- ventas123 = 7c222fb2927d828af22f592134e8932480637c0d496e540a745c6e8e0b5fcf2f3
 
 INSERT INTO USUARIO (cedula, nombres, apellidos, usuario_login, clave_hash, email, telefono, id_tipo_usuario) VALUES
-('1712345678', 'Kenny', 'Chung Velastegui', 'kenny.admin', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', 'kenny@ferreteria.com', '09987654321', 1),
-('1723456789', 'Isaac', 'Kalef Vera Villalba', 'isaac.manager', '698d51a19d8a121ce581499d7b701668d1794452d991f059878abcc4b6e0cda7', 'isaac@ferreteria.com', '09987654322', 2),
-('1734567890', 'Valeria', 'Mero Zambrano', 'valeria.jefe', '5a0b7f8f5f6c9b1e8c3d2a6f7e9b2c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0', 'valeria@ferreteria.com', '09987654323', 3),
-('1745678901', 'Ana', 'Vendedor', 'ana.vendedor', '7c222fb2927d828af22f592134e8932480637c0d496e540a745c6e8e0b5fcf2f3', 'ana@ferreteria.com', '09987654324', 5);
+('1712345678', 'Kenny', 'Chung Velastegui', 'kenny.admin', '$2b$12$ersQy76wZBL1knpNX.Z/BuNZJ7gbSiwsL2uFspuA1Q1qwpyEEzuvu', 'kenny@ferreteria.com', '09987654321', 1),
+('1723456789', 'Isaac', 'Kalef Vera Villalba', 'isaac.manager', '$2b$12$czi6JjMh/slO7FoUu2KW1./wpC6UPyTi4nMYYva2xyXEDPdvmkEyG', 'isaac@ferreteria.com', '09987654322', 2),
+('1734567890', 'Valeria', 'Mero Zambrano', 'valeria.jefe', '$2b$12$kZFUC.t1gDLchus2y29VSuSzF/Htqs/6gT4KKKmlW/YCsN5uMLsPG', 'valeria@ferreteria.com', '09987654323', 3),
+('1745678901', 'Ana', 'Vendedor', 'ana.vendedor', '$2b$12$AuuHPYZv76SLS03t5cWDs.SExFQXQChWg/fbUJDvCRBEiVN0n70Aa', 'ana@ferreteria.com', '09987654324', 5);
 
 -- Insertar categorías
 INSERT INTO CATEGORIA (nombre_categoria, descripcion) VALUES

@@ -2,6 +2,7 @@ from flask import Blueprint, request, session, jsonify
 from database.models import Usuario
 from database.database import db
 from utils.security import check_password
+from functools import wraps
 
 # Crear un Blueprint para las rutas de autenticación
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
@@ -52,6 +53,37 @@ def logout():
     """Cierra la sesión del usuario actual."""
     session.clear()
     return jsonify({'success': True})
+
+@auth_bp.route('/test-users', methods=['GET'])
+def get_test_users():
+    """Obtiene la lista de usuarios de prueba."""
+    try:
+        query = """
+        SELECT u.usuario_login, u.nombres, u.apellidos, tu.nombre_tipo as rol
+        FROM USUARIO u
+        JOIN TIPO_USUARIO tu ON u.id_tipo_usuario = tu.id_tipo_usuario
+        WHERE u.estado = 'ACTIVO'
+        """
+        
+        result = db.execute_query(query)
+        
+        if result:
+            # Formatear la respuesta para el frontend
+            test_users = [{
+                'username': user['usuario_login'],
+                'name': f"{user['nombres']} {user['apellidos']}",
+                'role': user['rol'].split()[-1]  # Obtener la última palabra del rol (Admin, Gerente, etc.)
+            } for user in result]
+            
+            return jsonify({
+                'success': True,
+                'test_users': test_users
+            })
+        else:
+            return jsonify({'error': 'No se encontraron usuarios de prueba'}), 404
+            
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @auth_bp.route('/me', methods=['GET'])
 def get_current_user():
