@@ -1,5 +1,6 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
+// Función para hacer peticiones a la API
 async function apiRequest(endpoint, options = {}) {
     try {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -22,5 +23,11 @@ async function apiRequest(endpoint, options = {}) {
         throw error;
     }
 }
+
+// Obtener usuarios de prueba
+export const getTestUsers = async () => {
+    const response = await apiRequest('/auth/test-users');
+    return response.test_users || [];
+};
 
 export default apiRequest;
