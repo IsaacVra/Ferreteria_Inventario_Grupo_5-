@@ -24,10 +24,4 @@ async function apiRequest(endpoint, options = {}) {
     }
 }
 
-// Obtener usuarios de prueba
-export const getTestUsers = async () => {
-    const response = await apiRequest('/auth/test-users');
-    return response.test_users || [];
-};
-
 export default apiRequest;
