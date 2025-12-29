@@ -26,28 +26,34 @@ def login():
         
         result = db.execute_query(query, (username,))
         
-        if result and len(result) > 0 and check_password(password, result[0]['clave_hash']):
+        if result and len(result) > 0:
             user = result[0]
-            session['user_id'] = user['id_usuario']
-            session['username'] = user['usuario_login']
-            session['role'] = user['rol']
+            # Debug: Print the stored hash and the result of check_password
+            print(f"Stored hash: {user['clave_hash']}")
+            print(f"Check password result: {check_password(password, user['clave_hash'])}")
             
-            return jsonify({
-                'success': True,
-                'user': {
-                    'id': user['id_usuario'],
-                    'username': user['usuario_login'],
-                    'name': f"{user['nombres']} {user['apellidos']}",
-                    'role': user['rol'],
-                    'email': user['email']
-                }
-            })
-        else:
-            return jsonify({'error': 'Credenciales incorrectas'}), 401
+            if check_password(password, user['clave_hash']):
+                session['user_id'] = user['id_usuario']
+                session['username'] = user['usuario_login']
+                session['role'] = user['rol']
+                
+                return jsonify({
+                    'success': True,
+                    'user': {
+                        'id': user['id_usuario'],
+                        'username': user['usuario_login'],
+                        'name': f"{user['nombres']} {user['apellidos']}",
+                        'role': user['rol'],
+                        'email': user['email']
+                    }
+                })
+        
+        return jsonify({'error': 'Credenciales incorrectas'}), 401
     
     except Exception as e:
+        print(f"Login error: {str(e)}")
         return jsonify({'error': str(e)}), 500
-
+        
 @auth_bp.route('/logout', methods=['POST'])
 def logout():
     """Cierra la sesión del usuario actual."""

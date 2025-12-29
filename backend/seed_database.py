@@ -53,11 +53,12 @@ def insert_tipos_usuario():
     
     print("Tipos de usuario insertados correctamente")
 
+# In seed_database.py, update the insert_usuarios function:
 def insert_usuarios():
     """Inserta usuarios de ejemplo con contraseñas hasheadas"""
     usuarios = [
-        ('admin', 'Admin', 'Sistema', 'admin@ferreteria.com', '0999999999', 'admin123', 1),
-        ('gerente1', 'María', 'González', 'gerente@ferreteria.com', '0987654321', 'gerente123', 2),
+        ('kenny.admin', 'Kenny', 'Admin', 'admin@ferreteria.com', '0999999999', 'admin123', 1),
+        ('isaac.manager', 'Isaac', 'Manager', 'gerente@ferreteria.com', '0987654321', 'gerente123', 2),
         ('bodega1', 'Carlos', 'Mendoza', 'bodega@ferreteria.com', '0976543210', 'bodega123', 3),
         ('vendedor1', 'Ana', 'Pérez', 'vendedor@ferreteria.com', '0965432109', 'vendedor123', 4),
         ('contador1', 'Luis', 'Martínez', 'contador@ferreteria.com', '0954321098', 'contador123', 5)
@@ -68,7 +69,11 @@ def insert_usuarios():
         existing = execute_query(check_query, (user[0],), fetch=True)
         
         if not existing:
-            hashed_password = hash_password(user[5])
+            # Get the plain text password
+            plain_password = user[5]
+            # Hash the password
+            hashed_password = hash_password(plain_password)
+            
             query = """
             INSERT INTO USUARIO (
                 cedula, nombres, apellidos, email, telefono, 
@@ -76,18 +81,19 @@ def insert_usuarios():
             ) VALUES (CONCAT('17', LPAD(%s, 8, '0')), %s, %s, %s, %s, %s, %s, 'ACTIVO', %s)
             """
             execute_query(query, (
-                str(random.randint(10000000, 99999999)),  # Genera una cédula aleatoria
-                user[1],  # nombres
-                user[2],  # apellidos
-                user[3],  # email
-                user[4],  # teléfono
-                user[0],  # usuario_login
-                hashed_password,
-                user[6]   # id_tipo_usuario
+                str(random.randint(10000000, 99999999)),  # Generate a random ID
+                user[1],  # First name
+                user[2],  # Last name
+                user[3],  # Email
+                user[4],  # Phone
+                user[0],  # Username
+                hashed_password,  # Hashed password
+                user[6]   # User type ID
             ))
     
-    print("Usuarios de ejemplo insertados correctamente")
-
+    print("Test users inserted successfully")
+    return execute_query("SELECT id_usuario, usuario_login FROM USUARIO", fetch=True)
+        
 def insert_categorias():
     """Inserta categorías de productos de ejemplo"""
     categorias = [
