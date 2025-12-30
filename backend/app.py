@@ -15,7 +15,11 @@ app.secret_key = Config.SECRET_KEY
 app.config['SESSION_TYPE'] = 'filesystem'
 
 # Configurar CORS
-CORS(app, supports_credentials=True)
+CORS(app, 
+     supports_credentials=True,
+     origins=['http://localhost:5173', 'http://127.0.0.1:5173'],
+     methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+     allow_headers=['Content-Type', 'Authorization'])
 
 # Importar blueprints de rutas
 from routes.auth import auth_bp
